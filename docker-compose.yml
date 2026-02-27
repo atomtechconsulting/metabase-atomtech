@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  metabase:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: metabase
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: ${MB_DB_DBNAME:-metabase}
+      MB_DB_PORT: 5432
+      MB_DB_USER: ${MB_DB_USER:-metabase}
+      MB_DB_PASS: ${MB_DB_PASS:-metabase}
+      MB_DB_HOST: postgres
+      MB_SITE_URL: ${MB_SITE_URL:-http://localhost:3000}
+      JAVA_TIMEZONE: ${JAVA_TIMEZONE:-America/Argentina/Buenos_Aires}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - metabase-net
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: metabase-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${MB_DB_DBNAME:-metabase}
+      POSTGRES_USER: ${MB_DB_USER:-metabase}
+      POSTGRES_PASSWORD: ${MB_DB_PASS:-metabase}
+    volumes:
+      - metabase_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${MB_DB_USER:-metabase}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - metabase-net
+
+volumes:
+  metabase_db_data:
+
+networks:
+  metabase-net:
+    driver: bridge
