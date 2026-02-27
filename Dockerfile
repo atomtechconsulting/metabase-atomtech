@@ -18,6 +18,10 @@ RUN apt-get update && apt-get upgrade -y && apt-get install wget apt-transport-h
     && chmod +x linux-install-1.12.0.1488.sh \
     && ./linux-install-1.12.0.1488.sh
 
+# install uv (Python package manager required for sqlglot dependencies)
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    ln -s /root/.local/bin/uv /usr/local/bin/uv
+
 COPY . .
 
 # version is pulled from git, but git doesn't trust the directory due to different owners
@@ -29,7 +33,7 @@ RUN npm install -g bun
 # install frontend dependencies
 RUN bun install --frozen-lockfile
 
-RUN INTERACTIVE=false CI=true MB_EDITION=$MB_EDITION bin/build.sh :version ${VERSION}
+RUN INTERACTIVE=false CI=true MB_EDITION=$MB_EDITION bin/build.sh
 
 # ###################
 # # STAGE 2: runner
