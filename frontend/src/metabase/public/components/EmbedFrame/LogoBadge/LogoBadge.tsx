@@ -6,25 +6,20 @@ import { ExternalLink } from "metabase/common/components/ExternalLink";
 import EmbedFrameS from "../EmbedFrame.module.css";
 
 import LogoBadgeStyle from "./LogoBadge.module.css";
-import MetabaseLogoWithText from "./metabase_logo_with_text.svg?component";
+import AtomTechLogo from "./atomtech_logo.svg";
 
 export const LogoBadge = ({ dark }: { dark: boolean }) => {
-  const utmContentValue = `embedded_banner_${encodeURIComponent(
-    getHostAppUrlDomain(),
-  )}`;
-
   return (
     <ExternalLink
       className={cx(EmbedFrameS.LogoBadge, LogoBadgeStyle.metabaseLink, {
         [LogoBadgeStyle.dark]: dark,
         [LogoBadgeStyle.light]: !dark,
       })}
-      href={`https://www.metabase.com?utm_medium=referral&utm_source=product&utm_campaign=powered_by_metabase&utm_content=${utmContentValue}`}
+      href="https://atomtech.es/servicios/analitica-de-datos"
       target="_blank"
     >
       <span>{t`Powered by`}</span>
-      {/* eslint-disable-next-line metabase/no-literal-metabase-strings -- This embedding badge which we don't want to show the whitelabeled name */}
-      <MetabaseLogoWithText height={32} aria-label="Metabase" />
+      <img src={AtomTechLogo} height={32} style={{ width: "auto" }} alt="AtomTech" />
     </ExternalLink>
   );
 };
